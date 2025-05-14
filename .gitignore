@@ -1,0 +1,27 @@
+
+
+# macOS filesystem files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon files
+Icon?
+Icon\r
+
+# Thumbnails and metadata
+._*
+.FBCIndexHeader
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+
+# macOS directory attributes
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
