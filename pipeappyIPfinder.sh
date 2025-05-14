@@ -18,15 +18,29 @@ function typewriter() {
 
 function loading_animation() {
     local duration="${1:-3}"
-    local chars="/-\|"
-    end=$((SECONDS + duration))
-    while [ $SECONDS -lt $end ]; do
-        for ((i=0; i<${#chars}; i++)); do
-            printf "\r${YELLOW}🔎 Raspberry Pi をスキャン中... %s${NC}" "${chars:$i:1}"
-            sleep 0.1
+    local bar_length=24
+    local fill_char="▓"
+    local empty_char="░"
+    local msg="     スクリプトを読み込み中... "
+    local color_bar='\033[1;36m'  # Cyan
+    local color_msg='\033[1;33m'  # Yellow
+    local color_reset='\033[0m'
+
+    local steps=$((duration * 10))
+    for ((i=0; i<=steps; i++)); do
+        local filled=$((i * bar_length / steps))
+        local bar=""
+        for ((j=0; j<bar_length; j++)); do
+            if [ $j -lt $filled ]; then
+                bar+="$fill_char"
+            else
+                bar+="$empty_char"
+            fi
         done
+        printf "\r${color_msg}%s${color_bar}[%s] %3d%%${color_reset}" "$msg" "$bar" "$((100 * i / steps))"
+        sleep 0.05
     done
-    printf "\r"
+    printf "\n"
 }
 
 # Check for --yes flag to auto-confirm

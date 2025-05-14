@@ -6,7 +6,7 @@ import sys
 import time
 import sys
 
-def typewriter(text, delay=0.03):
+def typewriter(text, delay=0.01):
     for char in text:
         sys.stdout.write(char)
         sys.stdout.flush()
@@ -48,6 +48,7 @@ def find_raspberry():
     except subprocess.CalledProcessError:
         local_full_ip = subprocess.check_output("ipconfig getifaddr en1", shell=True).decode().strip()
     start_time = time.time()
+    
     print("\n\n\033[38;5;218m   ☰ [INFO] SCANNING NETWORK: {}0/24...\033[0m".format(prefix))
     sys.stdout.flush()
 
@@ -69,19 +70,22 @@ def find_raspberry():
         print(f"\r\033[1;34m    [ローディング] スキャン中: [{bar}] {percent}%\033[0m", end="", flush=True)
     print()
    
-    print("\033[36m\n   ☰ [SUMMARY] Scan complete! \033[0m")
+    print("\033[36m\n☰    [SUMMARY] Scan complete! \033[0m")
 
     if found_devices:
         for ip, hostname in found_devices:
             if ip == local_full_ip:
                 continue
-            typewriter(f"   ● Device: {ip} — Hostname: {hostname}")
+            typewriter(f" ●●●●●● Device: {ip} — Hostname: {hostname}")
     else:
-        typewriter("✗ No active devices found.")
+        typewriter("      ✗ No active devices found.")
     duration = time.time() - start_time
     total_scanned = 254
     network_range = f"{prefix}0/24"
     # Japanese summary: scanned X IPs in network Y in Z seconds
+    print()
+    typewriter(f"⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤", 0.001)
+    print()
     typewriter(f"{total_scanned} 個のIPアドレスをスキャンしました。ネットワーク: {network_range}。所要時間: {duration:.2f}秒。", 0.005)
     sys.stdout.flush()
     return None
