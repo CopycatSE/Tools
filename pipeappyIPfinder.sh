@@ -50,18 +50,26 @@ for arg in "$@"; do
         AUTO_YES=true
     fi
 done
+clear
+echo 
+echo 
+echo 
+echo 
+echo 
+echo 
+echo 
+echo -e "${YELLOW}          ⚠ このスクリプトはネットワーク内の全デバイスをスキャンします。${NC}"
+echo -e "${YELLOW}(         WARNING: This script scans all devices in your local network.)${NC}"
+echo
+echo 
+echo 
+echo 
+echo 
+echo 
+echo 
 
-echo -e "${YELLOW}⚠ このスクリプトはネットワーク内の全デバイスをスキャンします。${NC}"
-echo -e "${YELLOW}(WARNING: This script scans all devices in your local network.)${NC}"
-if [ "$AUTO_YES" = false ]; then
-    read -p "続行しますか？ (Proceed? y/N): " confirm
-    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
-        echo -e "${RED}✗ キャンセルされました。スキャンは実行されませんでした。${NC}"
-        exit 1
-    fi
-else
-    echo -e "${GREEN}✓ --yes フラグ検出。スキャンを自動で続行します。${NC}"
-fi
+
+sleep 5
 
 clear
 echo -e "${CYAN}"
@@ -77,6 +85,7 @@ sleep 1
 
 typewriter " このスクリプトは、ネットワーク内のすべてのデバイスをスキャンします" 0.01
 typewriter " スキャン結果として、IPアドレスのレポートを表示します。" 0.01
+sleep 1
 echo
 echo -e "${CYAN}  ╭───────────────────────╮╭────────────────────────╮${NC}"
 echo -e "${CYAN}≡ │ システム情報取得中... ││ (Fetching system info) │${NC}"
@@ -134,6 +143,23 @@ check_cmd "python3" "Python3"
 check_cmd "ping" "Ping"
 check_cmd "awk" "Awk"
 
+
+# Create venv if it does not exist
+if [ ! -d "$HOME/myvenv" ]; then
+    typewriter "○ Python venv が見つかりません。~/myvenv を作成します..." 0.01
+    python3 -m venv "$HOME/myvenv"
+    if [ $? -ne 0 ]; then
+        typewriter "✗ venvの作成に失敗しました。python3 を確認してください。" 0.01
+        exit 1
+    fi
+fi
+
+# Activate the venv
+source "$HOME/myvenv/bin/activate"
+echo
+typewriter "            ✓ Python venv がアクティブになりました" 0.01
+echo
+
 loading_animation 3
 
-python3 "$(dirname "$0")/config/finder-logic.py"
+python3 "$(dirname "$0")/config/finder_logic.py"
