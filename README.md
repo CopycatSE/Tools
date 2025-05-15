@@ -5,34 +5,38 @@ Scan your local network for active devices and open ports — with options for a
 ## Requirements
 
 - macOS or Linux (may work on Windows with Python 3)
-- Python 3
+- Python 3 (only required if running the Python script)
 
 ## Installation
 
-Clone this repo and make scripts executable:
+Clone this repo:
 
 ```bash
 git clone <repo-url>
 cd Tools
-chmod +x pipeappyIPfinder.sh
-chmod +x config/finder_logic.py
 ```
 
 ## Usage
 
-Run with the Python script (interactive button selection):
+### Running the Python script (interactive button selection):
 
 ```bash
 python3 config/finder_logic.py
 ```
 
-Or with the bash script:
+### Running the standalone binary (no Python required):
 
 ```bash
-./pipeappyIPfinder.sh [--yes]
+./pipeappyIPfinder
 ```
 
-All required Python dependencies are installed automatically.
+Or with the `--yes` option:
+
+```bash
+./pipeappyIPfinder --yes
+```
+
+All required Python dependencies are installed automatically if using the Python script.
 
 ## Scan Modes
 
