@@ -13,6 +13,9 @@ if project_root not in sys.path:
 
 
 def run_deep_ssh_scan(ssh_ip_list):
+    """
+    Attempt to import and run the deep SSH port scan on the provided IP list.
+    """
     try:
         from config.ssh_tester_logic import scan_ssh_ports
         if ssh_ip_list:
@@ -23,6 +26,9 @@ def run_deep_ssh_scan(ssh_ip_list):
         typewriter("[!] [!] Failed to import scan_ssh_ports from config.ssh_tester_logic. SSH check skipped [!] [!].", 0.01)
 
 def run_common_ssh_scan(ssh_ip_list):
+    """
+    Attempt to import and run the common SSH port scan on the provided IP list.
+    """
     try:
         from config.ssh_tester_logic_lite import scan_ssh_ports
         if ssh_ip_list:
@@ -33,6 +39,11 @@ def run_common_ssh_scan(ssh_ip_list):
         typewriter("[!] [!] Failed to import scan_ssh_ports from config.ssh_tester_logic. SSH check skipped [!] [!]..", 0.01)
 
 def select_button():
+    """
+    Display a simple interactive button selector in the terminal.
+    Use left/right arrow keys to navigate and Enter to select.
+    Returns the index of the selected button.
+    """
     import sys
     import termios
     import tty
@@ -41,6 +52,7 @@ def select_button():
     selected = 0
 
     def print_buttons():
+        # Print buttons with the selected one highlighted (inverse colors)
         sys.stdout.write("\r    ")
         for i, btn in enumerate(buttons):
             if i == selected:
@@ -73,6 +85,9 @@ def select_button():
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
 def typewriter(text, delay=0.01):
+    """
+    Print text to stdout with a typewriter effect, character by character.
+    """
     for char in text:
         sys.stdout.write(char)
         sys.stdout.flush()
@@ -81,6 +96,11 @@ def typewriter(text, delay=0.01):
     sys.stdout.flush()
 
 def get_local_ip_prefix():
+    """
+    Get the local IP address prefix (first three octets) for the primary network interface.
+    Attempts 'en0' first, then 'en1' if 'en0' fails.
+    Returns a string like '192.168.1.'.
+    """
     try:
         result = subprocess.check_output("ipconfig getifaddr en0", shell=True).decode().strip()
     except subprocess.CalledProcessError:
@@ -90,6 +110,11 @@ def get_local_ip_prefix():
     return prefix
 
 def ping_device(ip):
+    """
+    Ping a given IP address once and return a tuple:
+    (True, ping_time) if successful, or (False, 0) if failed or timed out.
+    Timeout is set very low (0.1 seconds) for quick scanning.
+    """
     try:
         import time
         start = time.time()
@@ -99,6 +124,10 @@ def ping_device(ip):
         return False, 0
 
 def get_hostname(ip):
+    """
+    Perform a DNS lookup (nslookup) on the IP and extract the hostname.
+    Returns an empty string if no hostname is found or on error.
+    """
     try:
         output = subprocess.check_output(["nslookup", ip], stderr=subprocess.DEVNULL).decode()
         match = re.search(r'name = ([\w\-\.]+)', output)
@@ -107,6 +136,11 @@ def get_hostname(ip):
         return ""
 
 def find_raspberry():
+    """
+    Scan the local /24 network for active devices by pinging all addresses.
+    Displays a progress bar and summary in Japanese.
+    Returns a list of IPs (excluding this machine's IP) found to be active.
+    """
     prefix = get_local_ip_prefix()
     # Determine the full IP of this machine to exclude from the report
     try:
@@ -117,7 +151,6 @@ def find_raspberry():
     
     print(f"\n\033[38;5;218m   ☰ [INFO] SCANNING NETWORK: {prefix}0/24...\033[0m", flush=True)
 
-    last_bar = ""
     found_devices = []
 
     total_ips = 254
@@ -153,7 +186,7 @@ def find_raspberry():
     print()
     typewriter(f"⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤", 0.001)
     print()
-    typewriter(f"   {total_scanned} 個のIPアドレスをスキャンしました。ネットワーク: {network_range}。所要時間: {duration:.2f}秒。", 0.005)
+    typewriter(f"   {total_scanned} IP addresses scanned. Network: {network_range}. Duration: {duration:.2f} seconds.", 0.005)
     typewriter(f"⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤", 0.001)
     sys.stdout.flush()
 
@@ -162,8 +195,12 @@ def find_raspberry():
 
 
 def main():
+    """
+    Main entry point: prompt the user to select scan type, perform network scan,
+    and then run the chosen SSH scan.
+    """
     print()
-    print("\033[36m\n       スキャンの種類を選択してください  \033[0m")
+    print("\033[36m\n       Please select the type of scan  \033[0m")
     print()
 
     choice = select_button()

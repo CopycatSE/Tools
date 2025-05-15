@@ -9,7 +9,7 @@ import getpass
 import platform
 import shutil
 
-# Цвета для терминала
+# Terminal colors
 GREEN = '\033[0;32m'
 RED = '\033[0;31m'
 CYAN = '\033[0;36m'
@@ -17,12 +17,14 @@ YELLOW = '\033[1;33m'
 NC = '\033[0m'
 
 def typewriter(text, delay=0.03):
+    """Print text with a typewriter effect."""
     for char in text:
         print(char, end='', flush=True)
         time.sleep(delay)
     print()
 
 def loading_animation(duration=3):
+    """Display a loading animation with a progress bar and Japanese message."""
     bar_length = 24
     fill_char = "▓"
     empty_char = "░"
@@ -41,6 +43,10 @@ def loading_animation(duration=3):
     print()
 
 def check_cmd(cmd, label):
+    """
+    Check if a command is available.
+    If missing, attempt to install it via Homebrew (on macOS).
+    """
     if shutil.which(cmd):
         print(f"   ☑ {label} ... OK")
         return True
@@ -63,6 +69,7 @@ def check_cmd(cmd, label):
             return False
 
 def print_banner():
+    """Print the ASCII art banner with cyan color."""
     banner = f"""{CYAN}
   ██████╗ ██╗██████╗ ███████╗ █████╗ ██████╗ ██████╗ ██╗   ██╗
   ██╔══██╗██║██╔══██╗██╔════╝██╔══██╗██╔══██╗██╔══██╗╚██╗ ██╔╝
@@ -74,13 +81,15 @@ def print_banner():
     print(banner)
 
 def print_warning():
+    """Print a warning message about scanning all devices in the local network."""
     print()
-    print(f"{YELLOW}          ⚠ このスクリプトはネットワーク内の全デバイスをスキャンします。{NC}")
-    print(f"{YELLOW}(         WARNING: This script scans all devices in your local network.){NC}")
+    print(f"{YELLOW}          ⚠ このスクリプトはネットワーク内の全デバイスをスキャンします。⚠{NC}")
+    print(f"{YELLOW}         ⚠ WARNING: This script scans all devices in your local network ⚠{NC}")
     print()
     time.sleep(5)
 
 def system_info():
+    """Fetch and display system information with a typewriter effect."""
     print()
     print(f"{CYAN}  ╭───────────────────────╮╭────────────────────────╮{NC}")
     print(f"{CYAN}≡ │ システム情報取得中... ││ (Fetching system info) │{NC}")
@@ -100,6 +109,7 @@ def system_info():
     typewriter(f"    ○ ネットワーク (Wi-Fi):   {wifi}", 0.005)
 
 def check_tools():
+    """Check for required tools and attempt installation if missing."""
     print()
     print(f"{CYAN}  ╭─────────────────────────────╮{NC}")
     print(f"{CYAN}≡ │ 必要なツールをチェック中... │{NC}")
@@ -111,12 +121,14 @@ def check_tools():
     return missing
 
 def clear_screen():
+    """Clear the terminal screen."""
     if os.name == 'nt':
         os.system('cls')
     else:
         os.system('clear')
 
 def main():
+    """Main function to orchestrate the script execution."""
     clear_screen()
     print("\n" * 7)
     print_warning()
@@ -132,13 +144,13 @@ def main():
         sys.exit(1)
     print()
     loading_animation(3)
-    # Run main logic
+    # Import and run the main logic from finder_logic module
     try:
         from config.finder_logic import main as finder_main
     except ImportError:
-        print("Ошибка: не удалось импортировать finder_logic. Проверь структуру проекта.")
+        print("Error: Failed to import finder_logic. Please check the project structure.")
         sys.exit(1)
-    # Прямой вызов finder_logic:
+    # Directly call finder_logic main function
     finder_main()
 
 if __name__ == "__main__":
