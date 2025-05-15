@@ -1,4 +1,6 @@
 import socket
+import sys
+import time
 
 def check_ssh(ip, port=22, timeout=0.5):
     """Проверяет, открыт ли порт 22 на указанном IP."""
@@ -10,9 +12,6 @@ def check_ssh(ip, port=22, timeout=0.5):
         return True
     except (socket.timeout, socket.error):
         return False
-
-import sys
-import time
 
 def typewriter(text, delay=0.015):
     for char in text:
@@ -56,7 +55,6 @@ def scan_ssh_ports(ip_list):
         print()  # Newline after each IP's progress bar
         # Reporting
         if open_ports:
-            pri
             typewriter(f"{GREEN}                    ✓ {ip} — open: {', '.join(map(str, open_ports))}{RESET}", delay=0.001)
             print()
         else:
@@ -69,3 +67,6 @@ def scan_ssh_ports(ip_list):
     typewriter(f"{CYAN}     Scan complete for {len(ip_list)} hosts.{RESET}", delay=0.012)
     print()
     print()
+
+if __name__ == "__main__":
+    pass

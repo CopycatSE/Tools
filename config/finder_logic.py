@@ -1,10 +1,9 @@
+import sys
 import os
 import platform
 import subprocess
 import re
-import sys
 import time
-import sys
 
 
 # Dynamically add root project directory to sys.path
@@ -161,23 +160,29 @@ def find_raspberry():
     ssh_ip_list = [ip for ip, hostname in found_devices if ip != local_full_ip]
     return ssh_ip_list
 
-print()
-print("\033[36m\n       スキャンの種類を選択してください  \033[0m")
-print()
 
-choice = select_button()
-if choice == 0:
+def main():
     print()
-    typewriter (f"         EXECUTING DEEP PORT SCAN SEQUENCE...", 0.005)
+    print("\033[36m\n       スキャンの種類を選択してください  \033[0m")
     print()
-    ssh_ip_list = find_raspberry()
-    run_deep_ssh_scan(ssh_ip_list)
-elif choice == 1:
-    print()
-    typewriter (f"         EXECUTING COMMON PORT SCAN SEQUENCE...", 0.005)
-    print()
-    ssh_ip_list = find_raspberry()
-    run_common_ssh_scan(ssh_ip_list)
-else:
-    print("Bye!")
-    sys.exit(0)
+
+    choice = select_button()
+    if choice == 0:
+        print()
+        typewriter(f"         EXECUTING DEEP PORT SCAN SEQUENCE...", 0.005)
+        print()
+        ssh_ip_list = find_raspberry()
+        run_deep_ssh_scan(ssh_ip_list)
+    elif choice == 1:
+        print()
+        typewriter(f"         EXECUTING COMMON PORT SCAN SEQUENCE...", 0.005)
+        print()
+        ssh_ip_list = find_raspberry()
+        run_common_ssh_scan(ssh_ip_list)
+    else:
+        print("Bye!")
+        sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()
