@@ -25,3 +25,7 @@ Icon\r
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# misc
+build
+*.spec
