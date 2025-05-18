@@ -95,19 +95,23 @@ def typewriter(text, delay=0.01):
     sys.stdout.write("\n")
     sys.stdout.flush()
 
+import socket
+
 def get_local_ip_prefix():
     """
-    Get the local IP address prefix (first three octets) for the primary network interface.
-    Attempts 'en0' first, then 'en1' if 'en0' fails.
-    Returns a string like '192.168.1.'.
+    Cross-platform way to get the local IP address prefix (e.g., '192.168.1.').
+    Uses socket module to determine IP address in a reliable and OS-independent way.
     """
     try:
-        result = subprocess.check_output("ipconfig getifaddr en0", shell=True).decode().strip()
-    except subprocess.CalledProcessError:
-        result = subprocess.check_output("ipconfig getifaddr en1", shell=True).decode().strip()
-    ip = result
-    prefix = '.'.join(ip.split('.')[:3]) + '.'
-    return prefix
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        prefix = ".".join(ip.split(".")[:3]) + "."
+        return prefix
+    except Exception as e:
+        print(f"[!] Failed to determine local IP prefix: {e}")
+        return "192.168.1."
 
 def ping_device(ip):
     """
@@ -144,9 +148,13 @@ def find_raspberry():
     prefix = get_local_ip_prefix()
     # Determine the full IP of this machine to exclude from the report
     try:
-        local_full_ip = subprocess.check_output("ipconfig getifaddr en0", shell=True).decode().strip()
-    except subprocess.CalledProcessError:
-        local_full_ip = subprocess.check_output("ipconfig getifaddr en1", shell=True).decode().strip()
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        local_full_ip = s.getsockname()[0]
+        s.close()
+    except Exception as e:
+        print(f"[!] Failed to determine local IP: {e}")
+        local_full_ip = "127.0.0.1"
     start_time = time.time()
     
     print(f"\n\033[38;5;218m   ☰ [INFO] SCANNING NETWORK: {prefix}0/24...\033[0m", flush=True)
